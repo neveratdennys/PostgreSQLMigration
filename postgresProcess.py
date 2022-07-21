@@ -43,7 +43,7 @@ def modifyConvert(l):
     # look for B group after comma
     group = ""
     for n2, i in enumerate(l[n1+1:], start=n1+1):
-        checkIndex = checkBracket(l[count+8+n1-len(before)-8:][:n2-n1-1])
+        checkIndex = checkBracket(l[count+n1-len(before):][:n2-n1+1])
         if i == ',' and checkIndex == 0:
             return l
         elif checkIndex < 0:
@@ -56,13 +56,13 @@ def modifyConvert(l):
             operate = True
 
     # select the group after convert() call
-    after = l[n2:]
+    after = l[n2+1:]
 
     # (B) if it contains operators
     if operate:
-        return before + "(" + B.lstrip().rstrip(") ") + ') :: ' + A + " " + after
+        return before + "(" + B.lstrip() + ') :: ' + A + " " + after
     else:
-        return before + B.lstrip().rstrip(") ") + '::' + A + " " + after
+        return before + B.lstrip() + '::' + A + after
 
 
 # Modify cast syntax with convert(a,b). return line.
@@ -121,16 +121,22 @@ for line in fin:
     y = next((y for y in matchJoin if y in line), False)
     z = next((z for z in matchWhere if z in line), False)
     if x:
-        #read replace the string and write to output file
-        fout.write(re.sub(re.escape(x), 'FROM ' + 'dbo.', line))
-        fromMarker += 1
+        if x+"(" not in line:
+            #read replace the string and write to output file
+            fout.write(re.sub(re.escape(x), 'FROM ' + 'dbo.', line))
+            fromMarker = True
+        else:
+            fout.write(re.sub(re.escape(x), 'FROM ', line))
     # Find the join statements and add dbo.
     elif fromMarker and y:
-        fout.write(re.sub(re.escape(y), 'JOIN ' + 'dbo.', line))
+        if y+"(" not in line:
+            fout.write(re.sub(re.escape(y), 'JOIN ' + 'dbo.', line))
+        else:
+            fout.write(re.sub(re.escape(y), 'JOIN ', line))
     # Find where statements and capitalize and reset marker
     elif fromMarker and z:
         fout.write(re.sub(re.escape(z), "WHERE ", line))
-        fromMarker -= 1
+        fromMarker = False
     else:
         fout.write(line)
 
