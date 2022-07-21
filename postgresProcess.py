@@ -60,7 +60,7 @@ def modifyConvert(l):
 
     # (B) if it contains operators
     if operate:
-        return before + "(" + B.lstrip() + ') :: ' + A + " " + after
+        return before + "(" + B.lstrip() + ') :: ' + A + after
     else:
         return before + B.lstrip() + '::' + A + after
 
