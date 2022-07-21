@@ -6,3 +6,4 @@ Although a lot of changes required for this migration can be completed with simp
 List of functionality
 - add dbo. (or any schema name) to tables in a FROM/JOIN statement
 - replace the convert() function when it is used as a non formatted type cast
+- standardize keyword capitalization along the relevant keywords directly involved
