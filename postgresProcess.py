@@ -16,6 +16,7 @@ def checkBracket(my_string):
 
 
 # Modify the first convert in line
+# Based on suggestions from stackoverflow.com/questions/73040953
 def modifyConvert(l):
     # find the location of convert()
     count = l.index('convert(')
@@ -29,6 +30,7 @@ def modifyConvert(l):
     A=""
     B=""
     operate = False
+    operators = ["|", "<", ">", "="]
     # look for A group before comma
     for n1, i in enumerate(l[count+8:], start=len(before)+8):
         # find current position in l
@@ -50,7 +52,7 @@ def modifyConvert(l):
         group += i
         
         # mark operators
-        if i == '|':
+        if i in operators:
             operate = True
 
     # select the group after convert() call
