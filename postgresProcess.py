@@ -76,70 +76,92 @@ def convertCast(l):
 
     return l
 
+def main():
+
+    #input file
+    fin = open("testviews.sql", "rt")
+    #output file to write the result to
+    fout = open("testout.sql", "wt")
+
+    # markers
+    fromMarker = False
+    withMarker = False
+
+    # for each line in the input file
+    for line in fin:
+
+        # replace non leading tabs with space
+        while re.findall(r'[A-Za-z0-9]\t', line):
+            line = re.sub(r'([A-Za-z0-9])\t', r'\1 ', line)
+
+        # remove duplicate spaces
+        space = 1
+        while '  ' in line:
+            space += 1
+            if space > 3:
+                line = line.replace('  ', '\t')
+                space = 1
+            else:
+                line = line.replace('  ', ' ')
+
+        # Next line if line is None
+        if not line:
+            continue
 
 
-#input file
-fin = open("testviews.sql", "rt")
-#output file to write the result to
-fout = open("testout.sql", "wt")
-
-# marker for from
-fromMarker = 0
-
-# for each line in the input file
-for line in fin:
-
-    # replace non leading tabs with space
-    while re.findall(r'[A-Za-z0-9]\t', line):
-        line = re.sub(r'([A-Za-z0-9])\t', r'\1 ', line)
-
-    # remove duplicate spaces
-    space = 1
-    while '  ' in line:
-        space += 1
-        if space > 3:
-            line = line.replace('  ', '\t')
-            space = 1
-        else:
-            line = line.replace('  ', ' ')
-
-    # Next line if line is None
-    if not line:
-        continue
+        # Replace convert(A, B) for B::A
+        if ("convert(" in line):
+            line = convertCast(line)
 
 
-    # Replace convert(A, B) for B::A
-    if ("convert(" in line):
-        line = convertCast(line)
-
-
-    # Add dbo. if line starts with FROM and add mark for next line
-    matchFrom = ["from ", "FROM ", "From "]
-    matchJoin = ["join ", "JOIN ", "Join "]
-    matchWhere = ["where ", "WHERE ", "Where "]
-    x = next((x for x in matchFrom if x in line), False)
-    y = next((y for y in matchJoin if y in line), False)
-    z = next((z for z in matchWhere if z in line), False)
-    if x:
-        if x+"(" not in line:
-            #read replace the string and write to output file
-            fout.write(re.sub(re.escape(x), 'FROM ' + 'dbo.', line))
+        # Add dbo. if line starts with FROM and add mark for next line
+        matchFrom = ["from ", "FROM ", "From "]
+        matchJoin = ["join ", "JOIN ", "Join "]
+        matchWhere = ["where ", "WHERE ", "Where "]
+        matchSelect = ["select ", "SELECT ", "Select "]
+        matchWith = ["with ", "WITH ", "With "]
+        # Mark WITH block to not add "dbo." and unmark it on ;
+        if "WITH" in line:
+            withMarker = False
+        elif ";" in line:
+            withMarker = True
+            fromMarker = False
+        x = next((x for x in matchFrom if x in line), False)
+        y = next((y for y in matchJoin if y in line), False)
+        z = next((z for z in matchWhere if z in line), False)
+        s = next((s for s in matchSelect if s in line), False)
+        # FROM in line
+        # SELECT upper case
+        if s:
+            fout.write(re.sub(re.escape(s), 'SELECT ', line))
+        elif x:
+            if (x+"(" not in line) and withMarker and ("dbo." not in line):
+                #read replace the string and write to output file
+                fout.write(re.sub(re.escape(x), 'FROM ' + 'dbo.', line))
+            else:
+                fout.write(re.sub(re.escape(x), 'FROM ', line))
+            # mark FROM block regardless of FROM line
             fromMarker = True
+        # FROM statement after FROM line
+        elif fromMarker:
+            # JOIN
+            if y and (y+"(" not in line) and withMarker and ("dbo." not in line):
+                fout.write(re.sub(re.escape(y), 'JOIN ' + 'dbo.', line))
+            elif y:
+                fout.write(re.sub(re.escape(y), 'JOIN ', line))
+            # mark WHERE ending FROM statement
+            elif z:
+                fout.write(re.sub(re.escape(z), "WHERE ", line))
+                fromMarker = False
+            else:
+                fout.write(line)
         else:
-            fout.write(re.sub(re.escape(x), 'FROM ', line))
-    # Find the join statements and add dbo.
-    elif fromMarker and y:
-        if y+"(" not in line:
-            fout.write(re.sub(re.escape(y), 'JOIN ' + 'dbo.', line))
-        else:
-            fout.write(re.sub(re.escape(y), 'JOIN ', line))
-    # Find where statements and capitalize and reset marker
-    elif fromMarker and z:
-        fout.write(re.sub(re.escape(z), "WHERE ", line))
-        fromMarker = False
-    else:
-        fout.write(line)
+            fout.write(line)
 
-#close input and output files
-fin.close()
-fout.close()
+    #close input and output files
+    fin.close()
+    fout.close()
+
+# Run main()
+if __name__ == "__main__":
+    main()
