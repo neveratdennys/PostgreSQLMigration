@@ -83,8 +83,9 @@ def main():
     #output file to write the result to
     fout = open("testout.sql", "wt")
 
-    # marker for from
-    fromMarker = True
+    # markers
+    fromMarker = False
+    withMarker = False
 
     # for each line in the input file
     for line in fin:
@@ -124,13 +125,17 @@ def main():
             withMarker = False
         elif ";" in line:
             withMarker = True
-        x = next((x for x in matchFrom if x in line) and withMarker, False)
+            fromMarker = False
+        x = next((x for x in matchFrom if x in line), False)
         y = next((y for y in matchJoin if y in line), False)
         z = next((z for z in matchWhere if z in line), False)
         s = next((s for s in matchSelect if s in line), False)
         # FROM in line
-        if x:
-            if x+"(" not in line:
+        # SELECT upper case
+        if s:
+            fout.write(re.sub(re.escape(s), 'SELECT ', line))
+        elif x:
+            if (x+"(" not in line) and withMarker and ("dbo." not in line):
                 #read replace the string and write to output file
                 fout.write(re.sub(re.escape(x), 'FROM ' + 'dbo.', line))
             else:
@@ -140,7 +145,7 @@ def main():
         # FROM statement after FROM line
         elif fromMarker:
             # JOIN
-            if y and (y+"(" not in line) and withMarker:
+            if y and (y+"(" not in line) and withMarker and ("dbo." not in line):
                 fout.write(re.sub(re.escape(y), 'JOIN ' + 'dbo.', line))
             elif y:
                 fout.write(re.sub(re.escape(y), 'JOIN ', line))
@@ -149,13 +154,14 @@ def main():
                 fout.write(re.sub(re.escape(z), "WHERE ", line))
                 fromMarker = False
             else:
-                print("unexpected case omitted lines at " + line)
-        # SELECT upper case
-        elif s:
-            fout.write(re.sub(re.escape(s), 'SELECT ', line))
+                fout.write(line)
         else:
             fout.write(line)
 
     #close input and output files
     fin.close()
     fout.close()
+
+# Run main()
+if __name__ == "__main__":
+    main()
