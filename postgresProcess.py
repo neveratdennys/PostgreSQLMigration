@@ -119,29 +119,40 @@ def main():
         matchWhere = ["where ", "WHERE ", "Where "]
         matchSelect = ["select ", "SELECT ", "Select "]
         matchWith = ["with ", "WITH ", "With "]
-        #if "WITH" in line:
-        #    fromMarker = False
-        #elif "SELECT" in line
-        x = next((x for x in matchFrom if x in line), False)
+        # Mark WITH block to not add "dbo." and unmark it on ;
+        if "WITH" in line:
+            withMarker = False
+        elif ";" in line:
+            withMarker = True
+        x = next((x for x in matchFrom if x in line) and withMarker, False)
         y = next((y for y in matchJoin if y in line), False)
         z = next((z for z in matchWhere if z in line), False)
-        if x and fromMarker:
+        s = next((s for s in matchSelect if s in line), False)
+        # FROM in line
+        if x:
             if x+"(" not in line:
                 #read replace the string and write to output file
                 fout.write(re.sub(re.escape(x), 'FROM ' + 'dbo.', line))
-                fromMarker = True
             else:
                 fout.write(re.sub(re.escape(x), 'FROM ', line))
-        # Find the join statements and add dbo.
-        elif fromMarker and y:
-            if y+"(" not in line:
+            # mark FROM block regardless of FROM line
+            fromMarker = True
+        # FROM statement after FROM line
+        elif fromMarker:
+            # JOIN
+            if y and (y+"(" not in line) and withMarker:
                 fout.write(re.sub(re.escape(y), 'JOIN ' + 'dbo.', line))
-            else:
+            elif y:
                 fout.write(re.sub(re.escape(y), 'JOIN ', line))
-        # Find where statements and capitalize and reset marker
-        elif fromMarker and z:
-            fout.write(re.sub(re.escape(z), "WHERE ", line))
-            fromMarker = False
+            # mark WHERE ending FROM statement
+            elif z:
+                fout.write(re.sub(re.escape(z), "WHERE ", line))
+                fromMarker = False
+            else:
+                print("unexpected case omitted lines at " + line)
+        # SELECT upper case
+        elif s:
+            fout.write(re.sub(re.escape(s), 'SELECT ', line))
         else:
             fout.write(line)
 
