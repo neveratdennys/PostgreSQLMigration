@@ -7,3 +7,7 @@ List of functionality
 - add dbo. (or any schema name) to tables in a FROM/JOIN statement
 - replace the convert() function when it is used as a non formatted type cast
 - standardize keyword capitalization along the relevant keywords directly involved
+
+Known issues
+- spacing is wonky, with some regex find problems
+- only tested in views creation, may not behave as expected in procedures and functions.
