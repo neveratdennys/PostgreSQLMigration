@@ -25,8 +25,11 @@ def main():
         line = modify.tabSpace(line)
 
         # Replace convert(A, B) for B::A
-        if ("convert(" in line):
+        if ("convert(" in line.lower()):
             line = modify.convertCast(line)
+        # Replace charindex(A, B) for position(A in B)
+        if ("charindex(" in line.lower()):
+            line = modify.convertCharindex(line)
 
         # Add dbo. schema name as well as standardize capitalization
         line = modify.modifyLine(line)
