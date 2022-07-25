@@ -8,6 +8,9 @@ List of functionality
 - replace the convert() function when it is used as a non formatted type cast
 - standardize keyword capitalization along the relevant keywords directly involved
 
+Features to be added
+- replace the charindex() function with position()
+
 Known issues
-- spacing is wonky, with some regex find problems
-- only tested in views creation, may not behave as expected in procedures and functions.
+- spacing can be imperfect depending on conventions
+- only tested in views creation, may not behave as expected in stored procedures and functions.
