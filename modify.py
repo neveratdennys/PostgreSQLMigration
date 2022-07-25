@@ -1,22 +1,6 @@
 # modify.py
-
 import re
 import config
-
-# Standardize spacing
-def tabSpace(l):
-    # replace all non leading tabs with space
-    while re.findall(r'(?<!\t)(?!^)\t+', l):
-        l = re.sub(r'(?<!\t)(?!^)\t+', r' ', l)
-
-    # remove duplicate spaces
-    spaces = -((len(l) - len(l.lstrip(" "))) // -8)
-    l = l.lstrip(" ")
-    while spaces:
-        spaces -= 1
-        l = '\t' + l
-    return l
-
 
 # Helper: check for balanced wraps
 def checkWrap(my_string):
@@ -44,6 +28,67 @@ def checkWrap(my_string):
             quote = 0
 
     return count + apos + quote
+
+
+# Standardize spacing
+def tabSpace(l):
+    # replace all non leading tabs with space
+    while re.findall(r'(?<!\t)(?!^)\t+', l):
+        l = re.sub(r'(?<!\t)(?!^)\t+', r' ', l)
+
+    # strip extra spaces and account for leading spaces
+    spaces = -((len(l) - len(l.lstrip(" "))) // -8)
+    l = l.lstrip(" ")
+    while spaces:
+        spaces -= 1
+        l = '\t' + l
+    return l
+
+
+def modifyLine(l):
+    # Add dbo. if line starts with FROM and add mark for next line
+    matchFrom = ["from ", "FROM ", "From "]
+    matchJoin = ["join ", "JOIN ", "Join "]
+    matchWhere = ["where ", "WHERE ", "Where "]
+    matchSelect = ["select ", "SELECT ", "Select "]
+    matchWith = ["with ", "WITH ", "With "]
+    # Mark WITH block to not add "dbo." and unmark it on ;
+    if "WITH" in l:
+        withMarker = False
+    elif ";" in l:
+        config.withMarker = True
+        config.fromMarker = False
+    x = next((x for x in matchFrom if x in l), False)
+    y = next((y for y in matchJoin if y in l), False)
+    z = next((z for z in matchWhere if z in l), False)
+    s = next((s for s in matchSelect if s in l), False)
+    # SELECT upper case
+    if s:
+        return(re.sub(re.escape(s), 'SELECT ', l))
+    # FROM in line
+    elif x:
+        # mark FROM block regardless of FROM line
+        config.fromMarker = True
+        if (x+"(" not in l) and config.withMarker and ("dbo." not in l):
+            #read replace the string and write to output file
+            return(re.sub(re.escape(x), 'FROM ' + 'dbo.', l))
+        else:
+            return(re.sub(re.escape(x), 'FROM ', l))
+    # FROM statement after FROM line
+    elif config.fromMarker:
+        # JOIN
+        if y and (y+"(" not in l) and config.withMarker and ("dbo." not in l):
+            return(re.sub(re.escape(y), 'JOIN ' + 'dbo.', l))
+        elif y:
+            return(re.sub(re.escape(y), 'JOIN ', l))
+        # WHERE ending FROM statement
+        elif z:
+            config.fromMarker = False
+            return(re.sub(re.escape(z), "WHERE ", l))
+        else:
+            return(l)
+    else:
+        return(l)
 
 
 # Modify the first convert in line
@@ -102,57 +147,10 @@ def convertCast(l):
     while i>0:
         i -= 1
         l = modifyConvert(l)
-
     return l
 
 
-def modifyLine(l):
-    # Add dbo. if line starts with FROM and add mark for next line
-    matchFrom = ["from ", "FROM ", "From "]
-    matchJoin = ["join ", "JOIN ", "Join "]
-    matchWhere = ["where ", "WHERE ", "Where "]
-    matchSelect = ["select ", "SELECT ", "Select "]
-    matchWith = ["with ", "WITH ", "With "]
-    # Mark WITH block to not add "dbo." and unmark it on ;
-    if "WITH" in l:
-        withMarker = False
-    elif ";" in l:
-        config.withMarker = True
-        config.fromMarker = False
-    x = next((x for x in matchFrom if x in l), False)
-    y = next((y for y in matchJoin if y in l), False)
-    z = next((z for z in matchWhere if z in l), False)
-    s = next((s for s in matchSelect if s in l), False)
-    # SELECT upper case
-    if s:
-        return(re.sub(re.escape(s), 'SELECT ', l))
-    # FROM in line
-    elif x:
-        # mark FROM block regardless of FROM line
-        config.fromMarker = True
-        if (x+"(" not in l) and config.withMarker and ("dbo." not in l):
-            #read replace the string and write to output file
-            return(re.sub(re.escape(x), 'FROM ' + 'dbo.', l))
-        else:
-            return(re.sub(re.escape(x), 'FROM ', l))
-    # FROM statement after FROM line
-    elif config.fromMarker:
-        # JOIN
-        if y and (y+"(" not in l) and config.withMarker and ("dbo." not in l):
-            return(re.sub(re.escape(y), 'JOIN ' + 'dbo.', l))
-        elif y:
-            return(re.sub(re.escape(y), 'JOIN ', l))
-        # WHERE ending FROM statement
-        elif z:
-            config.fromMarker = False
-            return(re.sub(re.escape(z), "WHERE ", l))
-        else:
-            return(l)
-    else:
-        return(l)
-
-
-
+# Modify the first charindex in line
 def modifyIndex(l):
     # Find the location of charindex()
     count = l.lower().index('charindex(')
