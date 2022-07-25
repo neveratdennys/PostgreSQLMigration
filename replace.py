@@ -1,24 +1,9 @@
 # replace.py
-
-# replace isnull with coalesce
-def replaceIsnull(l):
-    return l
-
-# replace string + with ||
-def replaceConcat(l):
-    return l
-
-# replace [] with ""
-def replaceSquare(l):
-    return l
-
-# replace @ with pram_
-def replaceVar(l):
-    return l
-
-# replace nvarchar, optionally (max), with varchar
-def replaceNvarchar(l):
-    return l
+import re
+import config
 
 def replaceAll(l):
-    return l
+    # Create a regular expression  from the dictionary keys
+    regex = re.compile("(%s)" % "|".join(map(re.escape, config.replaceList.keys())))
+    # For each match, look-up corresponding value in dictionary
+    return regex.sub(lambda mo: config.replaceList[mo.group()], l) 

@@ -5,8 +5,8 @@ import config
 # Helper: check for balanced wraps
 def checkWrap(my_string):
     count = 0
-    left = ["(", "["]
-    right = [")", "]"]
+    left = ["(", "[", "{"]
+    right = [")", "]", "}"]
     apos = 0
     quote = 0
     for c in my_string:

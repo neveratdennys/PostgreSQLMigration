@@ -1,4 +1,4 @@
-# init.py
+# config.py
 
 def init():
     # keyword markers
@@ -6,3 +6,18 @@ def init():
     global withMarker
     fromMarker = False
     withMarker = False
+
+    # dictionary for replace functions
+    global replaceList
+    replaceList = {
+            "isnull(" : "coalesce(",
+            "ISNULL(" : "coalesce(",
+            "isnull (" : "coalesce(",
+            "ISNULL (" : "coalesce(",
+            #" + " : " || ",        #too many false positives
+            '[' : '"',
+            ']' : '"',
+            " @" : " pram_",
+            "nvarchar" : "varchar",
+            "varchar(max)" : "varchar"
+            }
