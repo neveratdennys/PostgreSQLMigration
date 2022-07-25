@@ -1,7 +1,34 @@
 # modify.py
-
 import re
 import config
+
+# Helper: check for balanced wraps
+def checkWrap(my_string):
+    count = 0
+    left = ["(", "["]
+    right = [")", "]"]
+    apos = 0
+    quote = 0
+    for c in my_string:
+        # handle brackets
+        if c in left:
+            count+=1
+        elif c in right:
+            count-=1
+
+        # handle '
+        if (c == "'") and (apos == 0):
+            apos = 1
+        elif (c == "'") and (apos == 1):
+            apos = 0
+        # handle "
+        if (c == '"') and (quote == 0):
+            quote = 1
+        elif (c == '"') and (quote == 1):
+            quote = 0
+
+    return count + apos + quote
+
 
 # Standardize spacing
 def tabSpace(l):
@@ -9,84 +36,12 @@ def tabSpace(l):
     while re.findall(r'(?<!\t)(?!^)\t+', l):
         l = re.sub(r'(?<!\t)(?!^)\t+', r' ', l)
 
-    # remove duplicate spaces
+    # strip extra spaces and account for leading spaces
     spaces = -((len(l) - len(l.lstrip(" "))) // -8)
     l = l.lstrip(" ")
     while spaces:
         spaces -= 1
         l = '\t' + l
-    return l
-
-
-# Helper: check for balanced brackets
-def checkBracket(my_string):
-    count = 0
-    for c in my_string:
-        if c == "(":
-            count+=1
-        elif c == ")":
-            count-=1
-    return count
-
-
-# Modify the first convert in line
-# Based on suggestions from stackoverflow.com/questions/73040953
-def modifyConvert(l):
-    # find the location of convert()
-    count = l.index('convert(')
-
-    # select the group before convert() call
-    before = l[:count]
-
-    group=""
-    n1=0
-    n2=0
-    A=""
-    B=""
-    operate = False
-    operators = ["|", "<", ">", "="]
-    # look for A group before comma
-    for n1, i in enumerate(l[count+8:], start=len(before)+8):
-        # find current position in l
-        checkIndex = checkBracket(l[count+8:][:n1-len(before)-8])
-        if i == ',' and checkIndex == 0:
-            A = group
-            break
-        group += i
-
-    # look for B group after comma
-    group = ""
-    for n2, i in enumerate(l[n1+1:], start=n1+1):
-        checkIndex = checkBracket(l[count+n1-len(before):][:n2-n1+1])
-        if i == ',' and checkIndex == 0:
-            return l
-        elif checkIndex < 0:
-            B = group
-            break
-        group += i
-        
-        # mark operators
-        if i in operators:
-            operate = True
-
-    # select the group after convert() call
-    after = l[n2+1:]
-
-    # (B) if it contains operators
-    if operate:
-        return before + "(" + B.lstrip() + ') :: ' + A + after
-    else:
-        return before + B.lstrip() + '::' + A + after
-
-
-# Modify cast syntax convert(a,b) to b::a. return line.
-def convertCast(l):
-    # Call helper for nested cases
-    i = l.count('convert(')
-    while i>0:
-        i -= 1
-        l = modifyConvert(l)
-
     return l
 
 
@@ -136,12 +91,108 @@ def modifyLine(l):
         return(l)
 
 
+# Modify the first convert in line
+# Based on suggestions from stackoverflow.com/questions/73040953
+def modifyConvert(l):
+    # find the location of convert()
+    count = l.lower().index('convert(')
+    # select the group before convert() call
+    before = l[:count]
+
+    group=""
+    n1=0
+    n2=0
+    A=""
+    B=""
+    operate = False
+    operators = ["|", "<", ">", "="]
+    # look for A group before comma
+    for n1, i in enumerate(l[count+8:], start=len(before)+8):
+        # find current position in l
+        checkIndex = checkWrap(l[count+8:][:n1-len(before)-8])
+        if i == ',' and checkIndex == 0:
+            A = group
+            break
+        group += i
+
+    # look for B group after comma
+    group = ""
+    for n2, i in enumerate(l[n1+1:], start=n1+1):
+        checkIndex = checkWrap(l[count+n1-len(before):][:n2-n1+1])
+        if i == ',' and checkIndex == 0:
+            return l
+        elif checkIndex < 0:
+            B = group
+            break
+        group += i
+        
+        # mark operators
+        if i in operators:
+            operate = True
+
+    # select the group after convert() call
+    after = l[n2+1:]
+
+    # (B) if it contains operators
+    if operate:
+        return before + "(" + B.lstrip() + ') :: ' + A + after
+    else:
+        return before + B.lstrip() + '::' + A + after
+
+
+# Modify cast syntax convert(a,b) to b::a. return line.
+def convertCast(l):
+    # Call helper for nested cases
+    i = l.lower().count('convert(')
+    while i>0:
+        i -= 1
+        l = modifyConvert(l)
+    return l
+
+
+# Modify the first charindex in line
+def modifyIndex(l):
+    # Find the location of charindex()
+    count = l.lower().index('charindex(')
+
+    # Select the group before charindex() call
+    before = l[:count]
+
+    group=""
+    n1=0
+    n2=0
+    A=""
+    B=""
+    # Look for A group before comma
+    for n1, i in enumerate(l[count+10:], start=len(before)+10):
+        # find current position in l
+        checkIndex = checkWrap(l[count+10:][:n1-len(before)-10])
+        if i == ',' and checkIndex == 0:
+            A = group
+            break
+        group += i
+
+    # Look for B group after comma
+    group = ""
+    for n2, i in enumerate(l[n1+1:], start=n1+1):
+        checkIndex = checkWrap(l[count+n1-len(before):][:n2-n1+1])
+        if i == ',' and checkIndex == 0:
+            return l
+        elif checkIndex < 0:
+            B = group
+            break
+        group += i
+        
+    # select the group after charindex() call
+    after = l[n2+1:]
+    return before + " position("+ A + " in " + B + ") " + after
+
 
 # Modify substring index syntax charindex(substring, string) to position(substring in string)
 def convertCharindex(l):
     # Call helper for nested cases
-    i = l.count('charindex(')
+    i = l.lower().count('charindex(')
     while i>0:
         i -= 1
-        l = modifyConvert(l)
+        l = modifyIndex(l)
     return l
