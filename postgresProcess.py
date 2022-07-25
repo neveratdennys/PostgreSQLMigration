@@ -3,13 +3,13 @@
 import glob
 import config
 import modify
+import ui
 
-def main():
-
+def main(name):
     #input file
-    fin = open("testviews.sql", "rt")
+    fin = open(name, "rt")
     #output file to write the result to
-    fout = open("testout.sql", "wt")
+    fout = open(name[:-4]+"pg.sql", "wt")
 
     # global markers
     config.init()
@@ -42,6 +42,8 @@ def main():
     fin.close()
     fout.close()
 
-# Run main()
+
+# Run main() for each sql script selected
 if __name__ == "__main__":
-    main()
+    for name in ui.selectFile():
+        main(name)
