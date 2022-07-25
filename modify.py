@@ -5,23 +5,16 @@ import config
 
 # Standardize spacing
 def tabSpace(l):
-    # replace non leading tabs with space
-    if("IR_OPTN_IR AS a" in l) or ("e2 is not null" in l):
-        print(l)
-        print(re.findall(r'.\t', l))
-    while re.findall(r'(?<!\t)(?!^)\t+', l):    # better than before but not good enough
+    # replace all non leading tabs with space
+    while re.findall(r'(?<!\t)(?!^)\t+', l):
         l = re.sub(r'(?<!\t)(?!^)\t+', r' ', l)
 
     # remove duplicate spaces
-    space = 1
-    while '  ' in l:
-        space += 1
-        if space > 3:
-            l = l.replace('  ', '\t')
-            space = 1
-        else:
-            l = l.replace('  ', ' ')
-
+    spaces = -((len(l) - len(l.lstrip(" "))) // -8)
+    l = l.lstrip(" ")
+    while spaces:
+        spaces -= 1
+        l = '\t' + l
     return l
 
 
