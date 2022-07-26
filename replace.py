@@ -2,6 +2,7 @@
 import re
 import config
 
+# Use global dictionary from config to find and replace
 def replaceAll(l):
     # Create a regular expression  from the dictionary keys
     regex = re.compile("(%s)" % "|".join(map(re.escape, config.replaceList.keys())))

@@ -1,5 +1,4 @@
 # postgresProcess.py
-
 import glob
 import config
 import modify
@@ -20,18 +19,10 @@ def main(name):
 
         # Standardize spacing first
         line = modify.tabSpace(line)
-
         # Find and replace
         line = replace.replaceAll(line)
-
-        # Replace convert(A, B) for B::A
-        if ("convert(" in line.lower()):
-            line = modify.convertCast(line)
-        # Replace charindex(A, B) for position(A in B)
-        if ("charindex(" in line.lower()):
-            line = modify.convertCharindex(line)
-        # Add dbo. schema name as well as standardize capitalization
-        line = modify.modifyLine(line)
+        # Modify functions and keywords
+        line = modify.modifyAll(line)
 
         # Write modified line in output file
         fout.write(line)

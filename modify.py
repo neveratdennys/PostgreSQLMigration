@@ -45,6 +45,7 @@ def tabSpace(l):
     return l
 
 
+# Enforce uppercase keywords and add dbo. schema name
 def modifyLine(l):
     # Add dbo. if line starts with FROM and add mark for next line
     matchFrom = ["from ", "FROM ", "From "]
@@ -195,4 +196,16 @@ def convertCharindex(l):
     while i>0:
         i -= 1
         l = modifyIndex(l)
+    return l
+
+
+def modifyAll(l):
+    # Replace convert(A, B) for B::A
+    if ("convert(" in l.lower()):
+        l = convertCast(l)
+    # Replace charindex(A, B) for position(A in B)
+    if ("charindex(" in l.lower()):
+        l = convertCharindex(l)
+    # Add dbo. schema name as well as standardize capitalization
+    l = modifyLine(l)
     return l

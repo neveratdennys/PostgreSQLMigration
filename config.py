@@ -15,6 +15,8 @@ def init():
             "isnull (" : "coalesce(",
             "ISNULL (" : "coalesce(",
             #" + " : " || ",        #too many false positives
+            "' +" : "' ||",
+            "+ '" : "|| '",
             '[' : '"',
             ']' : '"',
             " @" : " pram_",
