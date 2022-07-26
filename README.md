@@ -13,3 +13,8 @@ List of functionality
 Known issues
 - spacing can be imperfect depending on conventions
 - limited testing in stored procedures and functions.
+
+Using the tool
+1. git clone https://github.com/neveratdennys/PostgreSQLMigration
+2. from the cloned directory, run `python postgresProcess.py`
+3. choose files for conversion
