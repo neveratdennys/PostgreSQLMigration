@@ -15,6 +15,6 @@ Although a lot of changes required for this migration can be completed with simp
 - limited testing in stored procedures and functions.
 
 ## Using the tool
-1. git clone https://github.com/neveratdennys/PostgreSQLMigration
+1. run `git clone https://github.com/neveratdennys/PostgreSQLMigration`
 2. from the cloned directory, run `python postgresProcess.py`
 3. choose files for conversion
