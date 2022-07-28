@@ -1,7 +1,7 @@
 # PostgreSQLMigration
-Script to make SQL Server to Postgres migration easier for Views and Function.
+Script to make SQL Server to Postgres migration easier for functions and stored procedures.
 
-Although a lot of changes required for this migration can be completed with simply search and replace, but some changes are difficult to do especially on large databases. This project aims to provide more functionality and reduce manual conversion required given the sizable differences between tsql and pgsql.
+The functionalities of this Python project is only possible after applying [sqlserve2pgsql](https://github.com/dalibo/sqlserver2pgsql) for schema/data and Amazon's migration program for views/functions. This combination of tools already complete most of the migration, leaving only few unconverted cases to handle; and this project specifically handles repetitive instances of this final manual migration process.
 
 ## List of functionality
 - add dbo. (or any schema name) to tables in a FROM/JOIN statement
