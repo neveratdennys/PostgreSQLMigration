@@ -19,7 +19,9 @@ def init():
             "+ '" : "|| '",
             '[' : '"',
             ']' : '"',
-            " @" : " pram_",
+            " @" : " par_",
             "nvarchar" : "varchar",
-            "varchar(max)" : "varchar"
+            "varchar(max)" : "varchar",
+            "TOP " : "LIMIT ",
+            "top " : "limit "
             }

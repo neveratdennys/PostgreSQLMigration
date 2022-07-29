@@ -198,6 +198,10 @@ def convertCharindex(l):
         l = modifyIndex(l)
     return l
 
+# From SET pram_var = x
+def convertSet(l):
+    return l
+
 
 def modifyAll(l):
     # Replace convert(A, B) for B::A
@@ -206,6 +210,9 @@ def modifyAll(l):
     # Replace charindex(A, B) for position(A in B)
     if ("charindex(" in l.lower()):
         l = convertCharindex(l)
+    # Replace SET syntax for assigning values
+    if("set " in l.lower()):
+        l = convertSet(l)
     # Add dbo. schema name as well as standardize capitalization
     l = modifyLine(l)
     return l
