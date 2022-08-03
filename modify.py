@@ -37,7 +37,7 @@ def tabSpace(l):
         l = re.sub(r'(?<!\t)(?!^)\t+', r' ', l)
 
     # strip extra spaces and account for leading spaces
-    spaces = -((len(l) - len(l.lstrip(" "))) // -8)
+    spaces = -((len(l) - len(l.lstrip(" "))) // -4)
     l = l.lstrip(" ")
     while spaces:
         spaces -= 1
@@ -70,6 +70,7 @@ def modifyLine(l):
     elif x:
         # mark FROM block regardless of FROM line
         config.fromMarker = True
+        return(re.sub(re.escape(x), 'FROM ', l))
         if (x+"(" not in l) and config.withMarker and ("dbo." not in l):
             #read replace the string and write to output file
             return(re.sub(re.escape(x), 'FROM ' + 'dbo.', l))
@@ -79,6 +80,7 @@ def modifyLine(l):
     elif config.fromMarker:
         # JOIN
         if y and (y+"(" not in l) and config.withMarker and ("dbo." not in l):
+            return(re.sub(re.escape(y), 'JOIN ', l))
             return(re.sub(re.escape(y), 'JOIN ' + 'dbo.', l))
         elif y:
             return(re.sub(re.escape(y), 'JOIN ', l))
@@ -198,6 +200,10 @@ def convertCharindex(l):
         l = modifyIndex(l)
     return l
 
+# From SET pram_var = x
+def convertSet(l):
+    return l
+
 
 def modifyAll(l):
     # Replace convert(A, B) for B::A
@@ -206,6 +212,9 @@ def modifyAll(l):
     # Replace charindex(A, B) for position(A in B)
     if ("charindex(" in l.lower()):
         l = convertCharindex(l)
+    # Replace SET syntax for assigning values
+    if("set " in l.lower()):
+        l = convertSet(l)
     # Add dbo. schema name as well as standardize capitalization
     l = modifyLine(l)
     return l
