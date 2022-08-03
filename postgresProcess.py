@@ -13,12 +13,20 @@ def main(name):
 
     # for each line in the input file
     for line in fin:
+        # Mark blocks to look at
+        if "Severity CRITICAL" in line:
+            config.action = True
+            fout.write(line)
+            continue
+        elif config.action and ("*/" in line):
+            config.action = False
         # Next line if line is None
-        if not line:
+        if (not line) or (not config.action):
+            fout.write(line)
             continue
 
         # Standardize spacing first
-        line = modify.tabSpace(line)
+        #line = modify.tabSpace(line)
         # Find and replace
         line = replace.replaceAll(line)
         # Modify functions and keywords
