@@ -11,12 +11,13 @@ The functionalities of this Python project is only possible after applying [sqls
 
 ## Disabled functionality
 - add dbo. (or any schema name) to tables in a FROM/JOIN statement
+- spacing adjustment
 
 ## Known issues
-- spacing can be imperfect depending on conventions
+- convert() feature does not work if the function call is multiline
 - limited testing in stored procedures and functions.
 
 ## Using the tool
-1. run `git clone https://github.com/neveratdennys/PostgreSQLMigration`
+1. run`git clone https://github.com/neveratdennys/PostgreSQLMigration`
 2. from the cloned directory, run `python postgresProcess.py`
 3. choose files for conversion
