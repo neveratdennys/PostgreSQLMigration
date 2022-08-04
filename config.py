@@ -19,7 +19,7 @@ def init():
             "ISNULL (" : "coalesce(",
             "' +" : "' ||",
             "+ '" : "|| '",
-            '[' : '"',
+            '[' : '"',              # may replace more than it should
             ']' : '"',
             " @" : " @ar_",        # par_ for parameter, var_ for variable 
             "(@" : "(@ar_",        # par_ for parameter, var_ for variable 
