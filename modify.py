@@ -154,10 +154,10 @@ def convertCast(l):
 
 
 # Modify the first charindex in line
+# Bug: some unknown instance can break this function
 def modifyIndex(l):
     # Find the location of charindex()
     count = l.lower().index('charindex(')
-
     # Select the group before charindex() call
     before = l[:count]
 
