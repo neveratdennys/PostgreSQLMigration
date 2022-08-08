@@ -30,6 +30,7 @@ def main(name, act):
         #line = modify.tabSpace(line)
         # Find and replace
         line = replace.replaceAll(line)
+        line = replace.replaceAll(line)
         # Modify functions and keywords
         line = modify.modifyAll(line)
 
@@ -47,7 +48,6 @@ if __name__ == "__main__":
     # global markers
     config.init()
     act = input("Only act on Severity CRITICAL? (y/n)\n")
-    print(act)
     # act on all content or select content
     if act.lower() == "y":
        act = False
