@@ -8,6 +8,7 @@ The functionalities of this Python project is only possible after applying [sqls
 - standardize keyword capitalization along the relevant keywords directly involved
 - replace the charindex() function with position()
 - find and replace simple relavent strings
+- tools: split sql dumps to single files
 
 ## Disabled functionality
 - add dbo. (or any schema name) to tables in a FROM/JOIN statement
@@ -15,9 +16,10 @@ The functionalities of this Python project is only possible after applying [sqls
 
 ## Known issues
 - convert() feature does not work if the function call is multiline
-- limited testing in stored procedures and functions.
+- rare exeptions exist with replace / modify features, may not be fit to use on very large files
+- program hangs on file selection
 
 ## Using the tool
 1. run`git clone https://github.com/neveratdennys/PostgreSQLMigration`
 2. from the cloned directory, run `python postgresProcess.py`
-3. choose files for conversion
+3. follow instructions and choose files for conversion
