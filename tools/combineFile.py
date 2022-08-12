@@ -24,12 +24,13 @@ def splitByCreate(name):
 
 
 files = ui.selectFile()
-parentpath = Path(os.path.dirname(os.path.abspath(files[0]))).resolve().parent
-dump =  open(str(parentpath) + "/"  + "dump.sql", "w") 
+currentpath = Path(os.path.dirname(os.path.abspath(files[0]))).resolve()
+dumpname = str(currentpath.parent) + "/" + os.path.basename(str(currentpath))  + "dump.sql"
+dump =  open(dumpname, "w") 
 # call main
 for name in files:
     splitByCreate(name)
 
-print("dump.sql generated")
+print(dumpname + "generated")
 dump.close()
 
