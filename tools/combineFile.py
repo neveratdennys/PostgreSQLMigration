@@ -31,6 +31,6 @@ dump =  open(dumpname, "w")
 for name in files:
     splitByCreate(name)
 
-print(dumpname + "generated")
+print(dumpname + " generated")
 dump.close()
 
