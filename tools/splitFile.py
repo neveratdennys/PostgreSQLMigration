@@ -2,7 +2,6 @@
 # This method splits a SQL Dump file into each individual file
 import sys
 import os
-import glob
 import re
 sys.path.insert(1, '../')
 import ui
