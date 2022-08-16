@@ -8,7 +8,9 @@ The functionalities of this Python project is only possible after applying [sqls
 - standardize keyword capitalization along the relevant keywords directly involved
 - replace the charindex() function with position()
 - find and replace simple relavent strings
-- tools: split sql dumps to single files
+- tools: split sql dumps to single files, 
+  select subset of wanted files and split them to individual files, 
+  combine split files to single file
 
 ## Disabled functionality
 - add dbo. (or any schema name) to tables in a FROM/JOIN statement
