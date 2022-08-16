@@ -2,8 +2,7 @@
 # This method combined all selected sql files to a single dump.sql
 import sys
 import os
-import glob
-import re
+from tkinter import Tk, filedialog
 from pathlib import Path
 sys.path.insert(1, '../')
 import ui
@@ -22,6 +21,10 @@ def splitByCreate(name):
     #close input and output files
     fin.close()
 
+#root = Tk()
+#root.withdraw()
+#root.attributes('-topmost', True)
+#files = fileddialog.askdirecotry()
 
 files = ui.selectFile()
 currentpath = Path(os.path.dirname(os.path.abspath(files[0]))).resolve()

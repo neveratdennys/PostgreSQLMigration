@@ -12,7 +12,7 @@ def init():
     # dictionary for replace functions
     global replaceList
     replaceList = {
-            "set transaction isolation level" : "SET TRANSACTION",
+            #"set transaction isolation level" : "SET TRANSACTION",
             "isnull(" : "coalesce(",
             "ISNULL(" : "coalesce(",
             "isnull (" : "coalesce(",
@@ -23,8 +23,9 @@ def init():
             ']' : '"',
             " @" : " @ar_",        # par_ for parameter, var_ for variable 
             "(@" : "(@ar_",        # par_ for parameter, var_ for variable 
-            "varchar(max)" : "varchar",
-            "nvarchar" : "varchar", # psql replace with text???
+            "varchar(max)" : "TEXT",
+            "nvarchar" : "VARCHAR", 
+            "NVARCHAR" : "VARCHAR", 
             # the below may be missing some senarios
             "char(13)" : "chr(13)",     
             "char(11)" : "chr(11)",
