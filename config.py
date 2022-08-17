@@ -23,9 +23,10 @@ def init():
             ']' : '"',
             " @" : " @ar_",        # par_ for parameter, var_ for variable 
             "(@" : "(@ar_",        # par_ for parameter, var_ for variable 
-            "varchar(max)" : "TEXT",
-            "nvarchar" : "VARCHAR", 
-            "NVARCHAR" : "VARCHAR", 
+            "nvarchar(max)" : "TEXT",
+            "NVARCHAR(max)" : "TEXT",
+            "nvarchar " : "VARCHAR ", 
+            "NVARCHAR " : "VARCHAR ", 
             # the below may be missing some senarios
             "char(13)" : "chr(13)",     
             "char(11)" : "chr(11)",
