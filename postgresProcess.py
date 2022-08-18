@@ -30,7 +30,6 @@ def main(name, act):
         #line = modify.tabSpace(line)
         # Find and replace
         line = replace.replaceAll(line)
-        line = replace.replaceAll(line)
         # Modify functions and keywords
         line = modify.modifyAll(line)
 
