@@ -10,16 +10,17 @@ The functionalities of this Python project is only possible after applying [sqls
 - find and replace simple relavent strings
 - tools: split sql dumps to single files, 
   select subset of wanted files and split them to individual files, 
-  combine split files to single file
+  combine split files to single file,
+  clean files with excess double quotes
 
 ## Disabled functionality
 - add dbo. (or any schema name) to tables in a FROM/JOIN statement
 - spacing adjustment
 
 ## Known issues
-- convert() feature does not work if the function call is multiline
+- convert() feature does not work if the function call is multiline, however this should be extremely rare
 - rare exeptions exist with replace / modify features, may not be fit to use on very large files
-- program hangs on file selection
+- main program hangs on file selection in MINGW64
 
 ## Using the tool
 1. run`git clone https://github.com/neveratdennys/PostgreSQLMigration`
