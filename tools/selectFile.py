@@ -39,7 +39,7 @@ def selectFile(line, listed):
 
 # open dump file and target shortlist
 proceduredump = open("pgsqlprocedurespg.sql", "rt")     # This is the AWS processed stored procedures dump
-shortlist = open("procedurenames.txt", "rt")            # This is a formatted, wanted subset of procedure names. e.g. "CREATE OR REPLACE dbo.procedurename"
+shortlist = open("procedurenames.txt", "rt")            # This is a formatted, wanted subset of procedure names. e.g. "CREATE OR REPLACE PROCEDURE dbo.procedurename"
 listed = []
 # put shortlist into a list type
 for line in shortlist:
