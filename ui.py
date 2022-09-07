@@ -5,6 +5,8 @@ import tkinter.filedialog as fd
 def selectFile():
     root = tk.Tk()
     filez = fd.askopenfilenames(parent=root, title='Choose a file')
+    if not filez:
+        return None
     # check for sql extension
     for name in filez:
         if name[-4:] == ".sql":

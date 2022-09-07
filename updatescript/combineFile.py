@@ -27,13 +27,14 @@ def splitByCreate(name):
 #files = fileddialog.askdirecotry()
 
 files = ui.selectFile()
-currentpath = Path(os.path.dirname(os.path.abspath(files[0]))).resolve()
-dumpname = str(currentpath.parent) + "/" + os.path.basename(str(currentpath))  + "dump.sql"
-dump =  open(dumpname, "w") 
-# call main
-for name in files:
-    splitByCreate(name)
+if files:
+    currentpath = Path(os.path.dirname(os.path.abspath(files[0]))).resolve()
+    dumpname = str(currentpath.parent) + "/" + os.path.basename(str(currentpath))  + "dump.sql"
+    dump =  open(dumpname, "w") 
+    # call main
+    for name in files:
+        splitByCreate(name)
 
-print(dumpname + " generated")
-dump.close()
+    print(dumpname + " generated")
+    dump.close()
 
