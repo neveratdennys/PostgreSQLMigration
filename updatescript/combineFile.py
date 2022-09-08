@@ -2,13 +2,15 @@
 # This method combined all selected sql files to a single dump.sql
 import sys
 import os
-from tkinter import Tk, filedialog
+import glob
+import tkinter as tk
 from pathlib import Path
-sys.path.insert(1, '../')
-import ui
+from os import listdir
+from os.path import isfile, join
 
 
-def splitByCreate(name):
+# Read file write to dump
+def splitByCreate(name, dump):
     #input file
     fin = open(name, "rt")
 
@@ -21,20 +23,65 @@ def splitByCreate(name):
     #close input and output files
     fin.close()
 
-#root = Tk()
-#root.withdraw()
-#root.attributes('-topmost', True)
-#files = fileddialog.askdirecotry()
+# Main function called on button press
+def makeScript(directory, varlist, root):
+    selected = [directory[x] for x in range(len(directory)) if varlist[x].get()]
+    # Get current dir
+    current = os.getcwd()
 
-files = ui.selectFile()
-if files:
-    currentpath = Path(os.path.dirname(os.path.abspath(files[0]))).resolve()
-    dumpname = str(currentpath.parent) + "/" + os.path.basename(str(currentpath))  + "dump.sql"
-    dump =  open(dumpname, "w") 
-    # call main
-    for name in files:
-        splitByCreate(name)
+    # Get all files under chosen folders
+    files = []
+    for d in selected:
+        onlyfiles = glob.glob(current+"\\"+d+"\\*.sql")
+        files = files + onlyfiles
 
-    print(dumpname + " generated")
-    dump.close()
+    # Create dump
+    if files:
+        dump = open("UpdateScript.sql", "w") 
+        # call main
+        for name in files:
+            splitByCreate(name, dump)
+
+        print("UpdateScript.sql" + " generated")
+        dump.close()
+    else:
+        print("No files selected")
+
+    root.quit()
+
+
+# Get current directories
+directory = next(os.walk('.'))[1]
+
+# GUI Selection
+root = tk.Tk()
+root.title('SQL updatescript')
+root.geometry("600x800+120+120")
+
+w = tk.Label(root, text ='Script', font = "50")
+w.pack()
+
+# Make checkbox
+varlist = []
+for x in range(len(directory)):
+    varlist.append(tk.IntVar())
+    l = tk.Checkbutton(root, text = directory[x],
+            variable = varlist[x],
+            onvalue = 1,
+            offvalue = 0,
+            height = 2,
+            width = 20,
+            anchor = "w")
+    l.pack()
+
+    # Select number prefix by default
+    if directory[x][0].isdigit():
+        l.select()
+
+# Run button calls function
+B = tk.Button(root, text = "Run", command = lambda: makeScript(directory, varlist, root))
+B.pack()
+
+root.mainloop()
+
 
