@@ -4,6 +4,7 @@ import sys
 import os
 import glob
 import tkinter as tk
+from tkinter import messagebox
 from pathlib import Path
 from os import listdir
 from os.path import isfile, join
@@ -42,10 +43,12 @@ def makeScript(directory, varlist, root):
         for name in files:
             splitByCreate(name, dump)
 
-        print("UpdateScript.sql" + " generated")
         dump.close()
+        print("UpdateScript.sql" + " generated")
+        tk.messagebox.showinfo(title="Notice", message="UpdateScript.sql generated")
     else:
         print("No files selected")
+        tk.messagebox.showinfo(title="Notice", message="No files selected")
 
     root.quit()
 
@@ -55,10 +58,10 @@ directory = next(os.walk('.'))[1]
 
 # GUI Selection
 root = tk.Tk()
-root.title('SQL updatescript')
+root.title('SQL updatescript tool')
 root.geometry("600x800+120+120")
 
-w = tk.Label(root, text ='Script', font = "50")
+w = tk.Label(root, text ='Combine scripts from selected folders.', font = "50")
 w.pack()
 
 # Make checkbox
@@ -69,7 +72,7 @@ for x in range(len(directory)):
             variable = varlist[x],
             onvalue = 1,
             offvalue = 0,
-            height = 2,
+            height = 3,
             width = 20,
             anchor = "w")
     l.pack()
@@ -79,8 +82,8 @@ for x in range(len(directory)):
         l.select()
 
 # Run button calls function
-B = tk.Button(root, text = "Run", command = lambda: makeScript(directory, varlist, root))
-B.pack()
+B = tk.Button(root, text = "Run", command = lambda: makeScript(directory, varlist, root), height = 1, width = 10)
+B.pack(pady=10)
 
 root.mainloop()
 
