@@ -1,4 +1,4 @@
-# combineFile.py
+# fastCombine.py
 # This method combined all selected sql files to a single dump.sql
 import sys
 import os
@@ -14,18 +14,19 @@ import time
 start_time = time.time()
 
 # Read file write to dump
-def splitByCreate(name, dump):
+def splitByCreate(name):
+
     #input file
     fin = open(name, "rt")
 
-    # for each line in the input file
+    # put lines in string file
+    file = ""
     for line in fin:
-        dump.write(line)
+        file = file + line
 
-    dump.write("\n")
-
-    #close input and output files
     fin.close()
+    return file
+
 
 # Main function called on button press
 def makeScript(directory, varlist, root):
@@ -39,13 +40,16 @@ def makeScript(directory, varlist, root):
         onlyfiles = glob.glob(current+"\\"+d+"\\*.sql")
         files = files + onlyfiles
 
+    text = ""
     # Create dump
     if files:
-        dump = open("UpdateScript.sql", "w") 
-        # call main
+        # compile text
         for name in files:
-            splitByCreate(name, dump)
+            text = text + splitByCreate(name) + "\n"
 
+        # write file at once
+        dump = open("UpdateScript.sql", "w") 
+        dump.write(text)
         dump.close()
         print("UpdateScript.sql" + " generated")
         tk.messagebox.showinfo(title="Notice", message="UpdateScript.sql generated in " + str(time.time() - start_time) + "seconds")
