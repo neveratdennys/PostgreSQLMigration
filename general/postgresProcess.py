@@ -21,7 +21,7 @@ def main(name, act):
         elif config.action and ("*/" in line) and not act:
             config.action = False
 
-        # Next line if line is None
+        # Skip if None or no CRITICAL marked
         if (not line) or (not config.action):
             fout.write(line)
             continue
