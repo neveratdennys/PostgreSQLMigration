@@ -205,6 +205,40 @@ def convertSet(l):
     return l
 
 
+# Modify node
+    '''
+    from[ \t] A.nodes('B') C(D)[;]?  =>
+    with C(D) AS (values(
+        A
+    ))
+    select d.*
+    from C
+        cross join XMLTABLE ( 'B'
+            PASSING D
+            COLUMNS
+                nodedata text path '.') d
+    '''
+def convertNode(l):
+    # Find the location of charindex()
+    count = l.lower().index('from')
+    # Select the group before .node
+    before = l[:count]
+
+    # Find by search groups      A             B               C        D
+    search = re.search(r"from\s(.+)\.nodes\('(.+)'\) (\w+\s)?(\w+.?)\((\w+)\)", l.lower())
+
+    result = ""
+    result = result + before + "WITH " + search.group(4) + "(" + search.group(5) + ") AS (values(\n"
+    result = result + before + "\t" + search.group(1) + "))\n"
+    result = result + before + "SELECT d.* -- old .nodes REPLACE * BY HAND\n"
+    result = result + before + "FROM " + search.group(4) + "\n"
+    result = result + before + "\tCROSS JOIN XMLTABLE ('" + search.group(2) + "'\n"
+    result = result + before + "\t\tPASSING " + search.group(5) + "\n"
+    result = result + before + "\t\tCOLUMNS\n"
+    result = result + before + "\t\t\tnodedata TEXT path '.') d\n"
+    return result
+
+
 def modifyAll(l):
     # Replace convert(A, B) for B::A
     if ("convert(" in l.lower()):
@@ -213,8 +247,11 @@ def modifyAll(l):
     if ("charindex(" in l.lower()):
         l = convertCharindex(l)
     # Replace SET syntax for assigning values
-    if("set " in l.lower()):
+    if ("set " in l.lower()):
         l = convertSet(l)
+    # Help with .node conversion and add block
+    if (".nodes(" in l.lower()) and ("from" in l.lower()):
+        l = convertNode(l);
     # Add dbo. schema name as well as standardize capitalization
     l = modifyLine(l)
     return l

@@ -12,19 +12,20 @@ def init():
     # dictionary for replace functions
     global replaceList
     replaceList = {
-            #"set transaction isolation level" : "SET TRANSACTION",
             "isnull(" : "coalesce(",
             "ISNULL(" : "coalesce(",
             "isnull (" : "coalesce(",
             "ISNULL (" : "coalesce(",
             "' +" : "' ||",
             "+ '" : "|| '",
-            '[' : '"',              # may replace more than it should
-            ']' : '"',
-            " @" : " @ar_",        # par_ for parameter, var_ for variable 
-            "(@" : "(@ar_",        # par_ for parameter, var_ for variable 
+#            '[' : '"',              # may replace more than it should
+#            ']' : '"',
+#            " @" : " var_",        # par_ for parameter, var_ for variable 
+#            "(@" : "(var_",        # par_ for parameter, var_ for variable 
             "nvarchar(max)" : "TEXT",
-            "NVARCHAR(max)" : "TEXT",
+            "nvarchar(max)" : "TEXT",
+            "NVARCHAR (max)" : "TEXT",
+            "NVARCHAR (max)" : "TEXT",
             "nvarchar " : "VARCHAR ", 
             "NVARCHAR " : "VARCHAR ", 
             # the below may be missing some senarios
