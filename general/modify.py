@@ -219,7 +219,7 @@ def convertSet(l):
                 nodedata text path '.') d
     '''
 def convertNode(l):
-    # Find the location of charindex()
+    # Find the location of from .nodes
     count = l.lower().index('from')
     # Select the group before .node
     before = l[:count]
@@ -238,6 +238,46 @@ def convertNode(l):
     result = result + before + "\t\t\tnodedata TEXT path '.') d\n"
     return result
 
+# Modify text search contains
+'''
+Contains(A, B) 
+=> to_tsvector(A) @@ to_tsquery(B)
+'''
+def convertContains(l):
+    # Find location of contains
+    count = l.lower().index('contains(')
+    before = l[:count]
+        
+    group=""
+    n1=0
+    n2=0
+    A=""
+    B=""
+    # Look for A group before comma
+    for n1, i in enumerate(l[count+9:], start=len(before)+9):
+        # find current position in l
+        checkIndex = checkWrap(l[count+9:][:n1-len(before)-9])
+        if i == ',' and checkIndex == 0:
+            A = group
+            break
+        group += i
+
+    # Look for B group after comma
+    group = ""
+    for n2, i in enumerate(l[n1+1:], start=n1+1):
+        checkIndex = checkWrap(l[count+n1-len(before):][:n2-n1+1])
+        if i == ',' and checkIndex == 0:
+            return l
+        elif checkIndex < 0:
+            B = group
+            break
+        group += i
+        
+    # select the group after contains() call
+    after = l[n2+1:]
+    return before + " to_tsvector("+ A + ") @@ to_tsquery(" + B + ") " + after
+
+
 
 def modifyAll(l):
     # Replace convert(A, B) for B::A
@@ -252,6 +292,9 @@ def modifyAll(l):
     # Help with .node conversion and add block
     if (".nodes(" in l.lower()) and ("from" in l.lower()):
         l = convertNode(l);
+    # Replace contains(A, B) for to_tsvector(A) @@ to_tsquery(B)
+    if ("contains(" in l.lower()):
+        l = convertContains(l);
     # Add dbo. schema name as well as standardize capitalization
     l = modifyLine(l)
     return l
