@@ -8,6 +8,8 @@ The functionalities of this Python project is only possible after applying [sqls
 - replace the convert() function when it is used as a non formatted type cast
 - standardize keyword capitalization along the relevant keywords directly involved
 - replace the charindex() function with position()
+- replace .nodes() calls with relavent structure (still requires some manual work after replacement)
+- replace contains() function to ts_vector() @@ ts_query() structure
 - find and replace simple relavent strings
 - tools: split sql dumps to single files, 
   select subset of wanted files and split them to individual files, 
