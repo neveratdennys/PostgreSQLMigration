@@ -5,7 +5,7 @@ import os
 import re
 
 # write to output file
-def selectFile(line, listed):
+def selectFile(proceduredump, listed):
     found = False
     fout = None
     # find items and call writer
@@ -17,7 +17,7 @@ def selectFile(line, listed):
             for item in listed:
                 stripped = item.strip()
                 # If found, write to file
-                if stripped in line:
+                if ((stripped+'(') in line):
                     fout = open(stripped.replace("CREATE OR REPLACE PROCEDURE ", "")+".sql", "wt")
                     listed.remove(item)
                     # Mark start of block
@@ -28,7 +28,7 @@ def selectFile(line, listed):
 
         # Mark end of block
         if ("LANGUAGE plpgsql;" in line) and found:
-            print("Modified " + os.path.basename(fout.name))
+            #print("Modified " + os.path.basename(fout.name))
             fout.close()
             found = False
 
@@ -47,6 +47,7 @@ for line in shortlist:
 
 selectFile(proceduredump, listed)
 
+print('\nNot found: \n' + '\n'.join(map(str, listed)))
 
 shortlist.close()
 proceduredump.close()
