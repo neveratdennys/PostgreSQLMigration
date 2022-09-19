@@ -277,6 +277,46 @@ def convertContains(l):
     after = l[n2+1:]
     return before + " to_tsvector("+ A + ") @@ to_tsquery(" + B + ") " + after
 
+# Add ON true if not already in line
+def lateralJoin(l):
+
+    # No need to change if already in line
+    if ("on true" in l.lower()) or ("left outer" in l.lower()):
+        return l
+
+    if ("inner join" in l.lower()):
+        # Find the location of from .nodes
+        count = l.lower().index('inner')
+        # Select the group before .node
+        before = l[:count]
+
+        search = re.search(r"(INNER JOIN LATERAL .+ \w+)(\(\w+\))?(.+)?", l)
+
+    elif ("left join" in l.lower()):
+        # Find the location of from .nodes
+        count = l.lower().index('left')
+        # Select the group before .node
+        before = l[:count]
+
+        search = re.search(r"(LEFT JOIN LATERAL .+ \w+)(\(\w+\))?(.+)?", l)
+
+    # Escape if regex cannot find (e.g. multi line lateral join)
+    if search is None or checkWrap(l[count:])>1:
+        return l
+
+    result = ""
+    if search.group(2) is None and search.group(3) is None:
+        result = before + search.group(1) + " ON true\n"
+    elif search.group(2) is None:
+        result = before + search.group(1) + " ON true" + search.group(3) + '\n'
+    elif search.group(3) is None:
+        result = before + search.group(1) + search.group(2) + " ON true\n"
+    else:
+        result = before + search.group(1) + search.group(2) + " ON true" + search.group(3) + '\n'
+
+    #print(l+"result:"+result)
+    return result
+     
 
 
 def modifyAll(l):
@@ -295,6 +335,10 @@ def modifyAll(l):
     # Replace contains(A, B) for to_tsvector(A) @@ to_tsquery(B)
     if ("contains(" in l.lower()):
         l = convertContains(l);
+    # Add ON true for lateral joins
+    if ("inner join lateral" in l.lower()) or ("left join lateral" in l.lower()):
+        if len([n for n in range(len(l)) if l.lower().find('join lateral', n) == n]) == 1:
+            l= lateralJoin(l);
     # Add dbo. schema name as well as standardize capitalization
     l = modifyLine(l)
     return l
