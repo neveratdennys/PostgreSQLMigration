@@ -12,6 +12,7 @@ The functionalities of this Python project is only possible after applying [sqls
 	- replace the charindex() function with position()
 	- replace .nodes() calls with relavent structure (still requires some manual work after replacement)
 	- replace contains() function to ts_vector() @@ ts_query() structure
+	- add ON true after INNER/LEFT JOIN LATERAL to complete OUTER/CROSS APPLY conversion
 	- find and replace simple relavent strings
 - Tools: 
 	- split sql dumps to single files, 

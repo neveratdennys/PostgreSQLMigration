@@ -16,6 +16,10 @@ def init():
             "ISNULL(" : "coalesce(",
             "isnull (" : "coalesce(",
             "ISNULL (" : "coalesce(",
+            "OUTER APPLY" : "LEFT JOIN LATERAL",
+            "outer apply" : "LEFT JOIN LATERAL",
+            "CROSS APPLY" : "INNER JOIN LATERAL",
+            "cross apply" : "INNER JOIN LATERAL",
             "' +" : "' ||",
             "+ '" : "|| '",
 #            '[' : '"',              # may replace more than it should
