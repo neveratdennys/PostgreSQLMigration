@@ -3,6 +3,27 @@
 # 1. fix EXECUTE var_sql USING var1 var2 structure
 # 2. when var_sql is being built, replace var1 var2 ... with $1 $2 ... 
 import re
+import time
+
+
+# Replace given variable names only in the quoted sections
+def replaceQuoted(num, varName, count, line):
+
+    quoted = line.split("'")
+
+    # Find quoted sections
+    if (count % 2) != 0:
+        for x in range(1, len(quoted), 2):
+            quoted[x] = re.sub(r'@'+varName+r'([^\w\d])', "$"+str(num)+r'\1', quoted[x], flags=re.IGNORECASE)
+            quoted[x] = re.sub(r'[vp]ar_'+varName+r'([^\w\d])', "$"+str(num)+r'\1', quoted[x], flags=re.IGNORECASE)
+    else:
+        for x in range(0, len(quoted), 2):
+            quoted[x] = re.sub(r'@'+varName+r'([^\w\d])', "$"+str(num)+r'\1', quoted[x], flags=re.IGNORECASE)
+            quoted[x] = re.sub(r'[vp]ar_'+varName+r'([^\w\d])', "$"+str(num)+r'\1', quoted[x], flags=re.IGNORECASE)
+
+
+    return "'".join(quoted), len(quoted) - 1
+
 
 # Use variable name, find the related strings and replace using varlist with corresponding $n
 def replaceVar(name, varStr, l, sp):
@@ -11,6 +32,7 @@ def replaceVar(name, varStr, l, sp):
     varlist = varStr.replace(' ', '').split(",")
     execsp = []
     marker = False
+    count = 1
 
     for line in sp:
 
@@ -23,22 +45,16 @@ def replaceVar(name, varStr, l, sp):
         if ((name + " :=") in line) or marker:
 
             # detect end of assignement
-            if (";" in line):
+            if (re.search(";\s*$", line) is not None):
                 marker = False
             else:
                 marker = True
 
-
-            # replacement
+            # replace each var
             for i, x in enumerate(varlist):
+                line, length = replaceQuoted(i+1, x, count, line)
 
-                # detect edge cases and skip them
-                if (re.search(r"(\'.+||.+)"+x+r"(.+||)?(.+\')?", line) is not None):
-                    continue
-
-                line = re.sub(r"(\'.+)\@"+x+r"(.+\')", r"\1$"+str(i+1)+r"\2", line)
-                line = re.sub(r"(\'.+).ar_"+x+r"(.+\')", r"\1$"+str(i+1)+r"\2", line)
-
+            count = count + length
             execsp.append(line)
         
         else:
@@ -46,9 +62,7 @@ def replaceVar(name, varStr, l, sp):
             execsp.append(line)
 
     # execute line reached, replacement finished
-    return sp
     return execsp
-
 
 
 def complexExecute(l, sp):
