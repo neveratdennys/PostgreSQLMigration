@@ -68,12 +68,14 @@ def replaceVar(name, varStr, l, sp):
 def complexExecute(l, sp):
 
     # find execute and group accordingly
-    search = re.search(r"EXECUTE (\w+) USING ([^;\n]+)(;?)", l)
+    search = re.search(r"EXECUTE (\w+) USING ([^;\n]+)(.+;?)", l)
     if search:
         search = search.groups()
         if search[1] is not None:
             varlist = re.sub(r'.ar_', '', str(search[1]))
             varlist = re.sub(r'@', '', varlist)
+            if('USING' in varlist):
+                varlist = re.sub(r' USING .+', r'', varlist)
             # call loop function with useful groups
             sp = replaceVar(search[0], varlist, l, sp)
     return sp
