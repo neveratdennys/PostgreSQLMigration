@@ -7,7 +7,7 @@ import time
 
 
 # Replace given variable names only in the quoted sections
-def replaceQuoted(num, varName, count, line):
+def replaceQuoted(num, varName, count, line, marker):
 
     quoted = line.split("'")
 
@@ -16,13 +16,27 @@ def replaceQuoted(num, varName, count, line):
         for x in range(1, len(quoted), 2):
             quoted[x] = re.sub(r'@'+varName+r'([^\w\d])', "$"+str(num)+r'\1', quoted[x], flags=re.IGNORECASE)
             quoted[x] = re.sub(r'[vp]ar_'+varName+r'([^\w\d])', "$"+str(num)+r'\1', quoted[x], flags=re.IGNORECASE)
+            
     else:
         for x in range(0, len(quoted), 2):
             quoted[x] = re.sub(r'@'+varName+r'([^\w\d])', "$"+str(num)+r'\1', quoted[x], flags=re.IGNORECASE)
             quoted[x] = re.sub(r'[vp]ar_'+varName+r'([^\w\d])', "$"+str(num)+r'\1', quoted[x], flags=re.IGNORECASE)
 
+    # detect end of assignement
+    if (count % 2) != 0:
+        for x in range(0, len(quoted), 2):
+            if (re.search(";\s*$", quoted[x]) is not None):
+                marker = False
+            else:
+                marker = True
+    else: 
+        for x in range(1, len(quoted), 2):
+            if (re.search(";\s*$", quoted[x]) is not None):
+                marker = False
+            else:
+                marker = True
 
-    return "'".join(quoted), len(quoted) - 1
+    return "'".join(quoted), len(quoted) - 1, marker
 
 
 # Use variable name, find the related strings and replace using varlist with corresponding $n
@@ -44,15 +58,9 @@ def replaceVar(name, varStr, l, sp):
         # dynamic sql build detected, replacement begins (marked by firstword)
         if ((name + " :=") in line) or marker:
 
-            # detect end of assignement
-            if (re.search(";\s*$", line) is not None):
-                marker = False
-            else:
-                marker = True
-
             # replace each var
             for i, x in enumerate(varlist):
-                line, length = replaceQuoted(i+1, x, count, line)
+                line, length, marker = replaceQuoted(i+1, x, count, line, marker)
 
             count = count + length
             execsp.append(line)

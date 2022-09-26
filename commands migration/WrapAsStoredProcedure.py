@@ -1,6 +1,7 @@
 import sys
 import os
 import glob
+import re
 from itertools import groupby
 
 if __name__ == '__main__':
@@ -19,8 +20,8 @@ if __name__ == '__main__':
                 if len(sys.argv) >= 2:
                     basename = os.path.basename(file).rsplit('.')[0]
                     fileLines = f.readlines()
-                    fileLines = [line for line in fileLines if line.lower() != '\n']
-                    splitFileLines = [list(g) for k, g in groupby(fileLines, lambda x: x.lower() != 'go\n' and x.lower() != 'go') if k]
+                    fileLines = [line for line in fileLines if not re.match('^\s*$', line, re.IGNORECASE)]
+                    splitFileLines = [list(g) for k, g in groupby(fileLines, lambda x: not re.match('^\s*go\s*$', x, re.IGNORECASE)) if k]
 
                     returnFile = []
                     for idx, section in enumerate(splitFileLines):
@@ -38,7 +39,7 @@ if __name__ == '__main__':
                 else:
                     basename = os.path.basename(file).rsplit('.')[0]
                     fileLines = f.readlines()
-                    fileLines = [line for line in fileLines if line.lower() != '\n' and line.lower() != 'go\n' and line.lower() != 'go']
+                    fileLines = [line for line in fileLines if not re.match('^\s*(go)?\s*$', line, re.IGNORECASE)]
 
                     startLines = []
                     startLines += ["IF EXISTS(SELECT 1 FROM sys.objects WHERE [type] = 'P' AND name = '_" + basename + "') DROP PROC [_" + basename + "]\n", 
