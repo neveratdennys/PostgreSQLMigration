@@ -1,7 +1,8 @@
 # PostgreSQLMigration
 Scripts to make SQL Server to Postgres migration easier for functions, stored procedures and other scripts.
 
-The functionalities of this Python project is only possible after applying [sqlserve2pgsql](https://github.com/dalibo/sqlserver2pgsql) for schema/data and AWS Schema Conversion for views/functions. This combination of tools already complete most of the migration, leaving fewer unconverted cases to handle; and this project specifically handles repetitive instances of this final manual migration process.
+The functionalities of this Python project is only possible after applying [sqlserve2pgsql](https://github.com/dalibo/sqlserver2pgsql) for schema/data and AWS Schema Conversion for views/functions. This combination of tools already complete most of the migration, leaving fewer unconverted cases to handle; and this project specifically handles repetitive instances of this final manual migration process.  
+This project is not exhaustive and is certainly missing many helpful replacement operations. However, remaining portions are either simple regex replacements or require more manual attention. Additionally, the framework provided by the general program is mostly context aware (within a stored procedure) and can be modified for any custom functionality.
 
 ## List of functionality
 - Released: 
@@ -29,8 +30,11 @@ The functionalities of this Python project is only possible after applying [sqls
 - position() and ts_vector() @@ ts_query() replacements does not function correctly in dynamic sql construction. (this may recursively add to lines when the program is ran multiple times using its own output)
 - main program hangs on file selection in MINGW64
 
-## Using the tool
-1. run
-	`git clone https://github.com/neveratdennys/PostgreSQLMigration`
-2. from the cloned directory, run `python postgresProcess.py`
+## Using the general conversion tool
+1. run  
+	`git clone https://github.com/neveratdennys/PostgreSQLMigration`  
+then  
+	`cd PostgreSQLMigration/general`  
+2. from the cloned directory, run  
+	`python postgresProcess.py`
 3. follow instructions and choose files for conversion
