@@ -9,12 +9,12 @@ def fixBoolean(st, variable):
     return st
 
 def replaceText(st):
-    st = str.replace(st, "aws_sqlserver_ext.tomsbit('0')", 'false')
-    st = str.replace(st, "aws_sqlserver_ext.tomsbit('')", 'false')
-    st = str.replace(st, "aws_sqlserver_ext.tomsbit('1')", 'true')
-    st = str.replace(st, "aws_sqlserver_ext.tomsbit('False')", 'false')
-    st = str.replace(st, "aws_sqlserver_ext.SYS_OBJECTS", 'sys_objects')
-    st = str.replace(st, "aws_sqlserver_ext.object_id", 'object_id')
+    st = str.replace(st, "tomsbit('0')", 'false')
+    st = str.replace(st, "tomsbit('')", 'false')
+    st = str.replace(st, "tomsbit('1')", 'true')
+    st = str.replace(st, "tomsbit('False')", 'false')
+    st = str.replace(st, "SYS_OBJECTS", 'sys_objects')
+    st = str.replace(st, "object_id", 'object_id')
     st = str.replace(st, '$BODY$', '$$')
     st = str.replace(st, 'mainapp_dbo', 'dbo')
     st = str.replace(st, 'maincyber_dbo', 'dbo')

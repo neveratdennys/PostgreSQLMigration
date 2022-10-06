@@ -48,7 +48,7 @@ def makeScript(directory, varlist, root):
 
         dump.close()
         print("UpdateScript.sql" + " generated")
-        tk.messagebox.showinfo(title="Notice", message="UpdateScript.sql generated in " + round(str(time.time() - start_time), 2) + "seconds")
+        tk.messagebox.showinfo(title="Notice", message="UpdateScript.sql generated in " + str(round(time.time() - start_time, 2)) + "seconds")
     else:
         print("No files selected")
         tk.messagebox.showinfo(title="Notice", message="No files selected")
