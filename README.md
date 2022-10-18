@@ -29,6 +29,7 @@ This project is not exhaustive and is certainly missing many helpful replacement
 - convert() feature does not work if the function call is multiline, however this should be extremely rare
 - position() and ts_vector() @@ ts_query() replacements does not function correctly in dynamic sql construction. (this may recursively add to lines when the program is ran multiple times using its own output)
 - main program hangs on file selection in MINGW64
+- UpdateScript cannot read encoding issues that AWS Schema Conversion wrongly produces.
 
 ## Using the general conversion tool
 1. run  
