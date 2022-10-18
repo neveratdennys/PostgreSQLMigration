@@ -16,7 +16,7 @@ start_time = time.time()
 # Read file write to dump
 def splitByCreate(name, dump):
     #input file
-    fin = open(name, "rt")
+    fin = open(name, "rt", encoding='UTF-8')
 
     # for each line in the input file
     for line in fin:
@@ -36,7 +36,7 @@ def makeScript(directory, varlist, root):
     # Get all files under chosen folders
     files = []
     for d in selected:
-        onlyfiles = glob.glob(current+"\\"+d+"\\*.sql")
+        onlyfiles = glob.glob(current+"\\"+d+"\\**\\*.sql")
         files = files + onlyfiles
 
     # Create dump
