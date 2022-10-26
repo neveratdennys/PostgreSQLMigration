@@ -11,24 +11,23 @@ from os.path import isfile, join
 
 # Track time
 import time
-start_time = time.time()
 
 # Read file write to dump
 def splitByCreate(name, dump):
-    #input file
-    fin = open(name, "rt", encoding='UTF-8')
+    # input file
+    fin = open(name, "rb")
+    line = fin.read()
 
-    # for each line in the input file
-    for line in fin:
-        dump.write(line)
-
-    dump.write("\n")
+    # write block to dump
+    dump.write(line)
 
     #close input and output files
     fin.close()
 
 # Main function called on button press
 def makeScript(directory, varlist, root):
+    # Track time on button press
+    start_time = time.time()
     selected = [directory[x] for x in range(len(directory)) if varlist[x].get()]
     # Get current dir
     current = os.getcwd()
@@ -41,7 +40,7 @@ def makeScript(directory, varlist, root):
 
     # Create dump
     if files:
-        dump = open("UpdateScript.sql", "w") 
+        dump = open("UpdateScript.sql", "wb") 
         # call main
         for name in files:
             splitByCreate(name, dump)
