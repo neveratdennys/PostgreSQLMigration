@@ -35,6 +35,8 @@ def makeScript(directory, varlist, root):
     # Get all files under chosen folders
     files = []
     for d in selected:
+        onlyfiles = glob.glob(current+"\\"+d+"\\*.sql")
+        files = files + onlyfiles
         onlyfiles = glob.glob(current+"\\"+d+"\\**\\*.sql")
         files = files + onlyfiles
 
