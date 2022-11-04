@@ -20,6 +20,7 @@ def splitByCreate(name, dump):
 
     # write block to dump
     dump.write(line)
+    dump.write(b'\n')
 
     #close input and output files
     fin.close()
