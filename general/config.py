@@ -20,8 +20,8 @@ def init():
             "outer apply" : "LEFT JOIN LATERAL",
             "CROSS APPLY" : "INNER JOIN LATERAL",
             "cross apply" : "INNER JOIN LATERAL",
-            "' +" : "' +",
-            "+ '" : "+ '",
+            "' +" : "' ||",
+            "+ '" : "|| '",
 #            '[' : '"',              # may replace more than it should
 #            ']' : '"',
 #            " @" : " var_",        # par_ for parameter, var_ for variable 
