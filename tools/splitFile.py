@@ -3,7 +3,7 @@
 import sys
 import os
 import re
-sys.path.insert(1, '../')
+sys.path.insert(1, '../general/')
 import ui
 
 def splitByCreate(name):
