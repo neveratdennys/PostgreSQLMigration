@@ -15,35 +15,39 @@ import time
 # Read, replace then write to new file
 def processCS(name):
 
-    dump = open(name[:-3]+"pg.cs", "wt") 
     # input file
     fin = open(name, "rt")
-    block = fin.readlines()
+    block = fin.read()
 
-    # write block to dump
-    for line in block:
-        line = line.replace("Aniki.SqlServer","Aniki.Postgres")
-        line = line.replace("Repo.MSSql","Repo.NpgSql")
-        line = line.replace("[SqlServerRepo]","[PostgresRepo]")
-        line = line.replace("AppSqlServerDbContext", "AppPostgresDbContext")
+    #write block to dump
+    block = block.replace("Aniki.SqlServer","Aniki.PostgresSQL")
+    block = block.replace("Repo.MSSql","Repo.NpgSql")
+    block = block.replace("[SqlServerRepo]","[PostgresRepo]")
+    block = block.replace("ApiSqlServerDbContext", "ApiPostgresDbContext")
+    block = block.replace("SqlDataReader", "NpgsqlDataReader")
+    block = block.replace("SqlParameter", "NpgsqlParameter")
+    block = block.replace("SqlException", "NpgsqlException")
 
-        # variables
-        line = line.replace('ParameterFactory.Create("@', 'ParameterFactory.Create("par_')
-        line = line.replace("SqlDbType.", "NpgsqlDbType.")
-        line = line.replace(".NVarChar", ".Varchar")
-        line = line.replace(".VarChar", ".Varchar")
-        line = line.replace(".Int", ".Integer")
-        line = line.replace(".DateTime", ".Timestamp")
-        line = line.replace(".UniqueIdentifier", ".Uuid")
-        line = line.replace(".Bit", ".Boolean")
-        line = line.replace(".VarBinary", ".Bytea")
+    # variables
+    block = block.replace('ParameterFactory.Create("@', 'ParameterFactory.Create("par_')
+    block = block.replace("SqlDbType.", "NpgsqlDbType.")
+    block = block.replace("NpgsqlDbType.NVarChar", "NpgsqlDbType.Varchar")
+    block = block.replace("NpgsqlDbType.VarChar", "NpgsqlDbType.Varchar")
+    block = block.replace("NpgsqlDbType.Int,", "NpgsqlDbType.Integer,")
+    block = block.replace("NpgsqlDbType.Int)", "NpgsqlDbType.Integer)")
+    block = block.replace("NpgsqlDbType.BigInt", "NpgsqlDbType.Bigint")
+    block = block.replace("NpgsqlDbType.DateTime", "NpgsqlDbType.Timestamp")
+    block = block.replace("NpgsqlDbType.UniqueIdentifier", "NpgsqlDbType.Uuid")
+    block = block.replace("NpgsqlDbType.Bit", "NpgsqlDbType.Boolean")
+    block = block.replace("NpgsqlDbType.VarBinary", "NpgsqlDbType.Bytea")
 
-        dump.write(line)
-
-
-    #close input and output files
-    dump.close()
+    # input file closed
     fin.close()
+
+    # overwrite input file
+    dump = open(name, "wt") 
+    dump.write(block)
+    dump.close()
 
 # Main function called on button press
 def makeScript(directory, varlist, root):
