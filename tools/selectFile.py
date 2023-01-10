@@ -18,10 +18,15 @@ def selectFile(proceduredump, listed):
                 stripped = item.strip()
                 # If found, write to file
                 if ((stripped+'(') in line):
-                    fout = open(stripped.replace("CREATE OR REPLACE PROCEDURE ", "")+".sql", "wt")
+                    pname = stripped.replace("CREATE OR REPLACE PROCEDURE ", "")
+                    fout = open(pname+".sql", "wt")
                     listed.remove(item)
                     # Mark start of block
                     found = True
+
+                    # Add drop line
+                    fout.write("DROP PROCEDURE IF EXISTS " + pname + ";\n\n")
+
                     break
         if found: 
             fout.write(line)

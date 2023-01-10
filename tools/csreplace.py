@@ -40,6 +40,7 @@ def processCS(name):
     block = block.replace("NpgsqlDbType.UniqueIdentifier", "NpgsqlDbType.Uuid")
     block = block.replace("NpgsqlDbType.Bit", "NpgsqlDbType.Boolean")
     block = block.replace("NpgsqlDbType.VarBinary", "NpgsqlDbType.Bytea")
+    block = block.replace("NpgsqlDbType.Binary", "NpgsqlDbType.Bytea")
 
     # input file closed
     fin.close()
